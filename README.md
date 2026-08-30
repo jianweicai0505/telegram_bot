@@ -6,5 +6,6 @@
 快捷复制按钮**：每次计算出结果后，下方会自动生成一个内联按钮，点击即可快速复制或引用计算结果。 - **⚙️ 
 一键交互部署**：提供全自动安装脚本，支持在安装过程中交互式输入 Token。 ---
 ## 🚀 快速一键部署
-你可以在任何 Linux VPS 上（推荐 Ubuntu/Debian）使用以下单行命令一键安装和部署： ```bash
-bash <(curl -s [https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh](https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh))
+你可以在任何 Linux VPS 上（推荐 Ubuntu/Debian）使用以下单行命令一键安装和部署： 
+```bash
+bash <(curl -s https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh)
