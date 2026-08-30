@@ -18,4 +18,4 @@
 你可以在任何 Linux VPS 上（推荐 Ubuntu/Debian）使用以下单行命令一键安装和部署：
 
 ```bash
-bash <(curl -s [https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh](https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh))
+bash <(curl -s https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh)
