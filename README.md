@@ -19,5 +19,5 @@
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/jianweicai0505/telegram_bot/main/install.sh)
-
+```
 ## 🚀 tbot
