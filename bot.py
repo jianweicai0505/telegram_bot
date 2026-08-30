@@ -1,7 +1,6 @@
 import logging
-import os
 import re
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
 logging.basicConfig(
@@ -21,18 +20,33 @@ async def calculate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     text = update.message.text.strip()
     
+    # 严格过滤：只允许数字、基本运算符、括号和小数点
     allowed_chars = set("0123456789+-*/(). ")
     if not all(c in allowed_chars for c in text):
         return  
 
+    # 必须同时包含数字和至少一个运算符
     if not re.search(r"\d", text) or not any(op in text for op in ["+", "-", "*", "/"]):
         return  
 
     try:
         result = eval(text, {"__builtins__": None}, {})
+        
+        # 构造返回文本
+        reply_text = f"✨ 计算结果：\n`{text} = {result}`"
+        
+        # 添加一个内联按钮：点击后可以将结果复制（Telegram 会利用 url 或 switch_inline_query 方便用户复制，
+        # 或者使用 Telegram 官方支持的复制功能：通过复制网页链接、或者是直接显示文本）
+        # 这里我们使用一个实用的按钮，把结果作为参数或者直接附带说明
+        keyboard = [
+            [InlineKeyboardButton(f"📋 复制结果: {result}", switch_inline_query_current_chat=str(result))]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
         await update.message.reply_text(
-            f"✨ 计算结果：\n`{text} = {result}`", 
+            reply_text, 
             parse_mode="Markdown",
+            reply_markup=reply_markup,
             reply_to_message_id=update.message.message_id
         )
     except ZeroDivisionError:
@@ -41,7 +55,6 @@ async def calculate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         pass
 
 if __name__ == "__main__":
-    # 填入占位符，由安装脚本在部署时自动替换
     TOKEN = "YOUR_BOT_TOKEN_HERE"
     
     if TOKEN == "YOUR_BOT_TOKEN_HERE":
