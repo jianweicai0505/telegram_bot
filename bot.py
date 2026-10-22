@@ -1,7 +1,7 @@
 import logging
 import re
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, CallbackQueryHandler, filters
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -35,8 +35,9 @@ async def calculate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # 构造返回文本
         reply_text = f"✨ 计算结果：\n`{text} = {result}`"
         
+        # 使用 callback_data，点击后直接由机器人发送结果文本供复制
         keyboard = [
-            [InlineKeyboardButton(f"📋 复制结果: {result}", switch_inline_query_current_chat=str(result))]
+            [InlineKeyboardButton(f"📋 获取结果文本: {result}", callback_data=f"copy_{result}")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -51,6 +52,16 @@ async def calculate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         pass
 
+async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer() # 确认收到点击事件，消除按钮转圈
+    
+    data = query.data
+    if data.startswith("copy_"):
+        val = data.split("_")[1]
+        # 直接由机器人在对话中回复纯文本结果，方便长按复制
+        await query.message.reply_text(f"📌 复制结果：`{val}`", parse_mode="Markdown")
+
 if __name__ == "__main__":
     TOKEN = "YOUR_BOT_TOKEN_HERE"
     
@@ -61,6 +72,7 @@ if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
     
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button_callback))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), calculate))
     
     print("🤖 纯净计算机器人已启动并正在运行...")
