@@ -75,17 +75,19 @@ else
   git pull origin main
 fi
 
-# 2. 动态注入 Token
+# 2. 动态注入 Token（采用极其稳健的正则匹配）
 echo "⚙️ 正在安全注入 Bot Token 配置..."
 python3 -c "
 with open('bot.py', 'r', encoding='utf-8') as f:
     content = f.read()
 
 import re
-new_content = re.sub(r'TOKEN\s*=\s*[\"'].*?[\"']', f'TOKEN = \"{BOT_TOKEN}\"', content)
+new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', f'TOKEN = \"{BOT_TOKEN}\"', content)
 
 with open('bot.py', 'w', encoding='utf-8') as f:
     f.write(new_content)
+
+print(f'Token 注入成功，替换次数: {count}')
 "
 
 # 3. 安装依赖与虚拟环境
