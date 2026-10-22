@@ -35,9 +35,6 @@ async def calculate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # 构造返回文本
         reply_text = f"✨ 计算结果：\n`{text} = {result}`"
         
-        # 添加一个内联按钮：点击后可以将结果复制（Telegram 会利用 url 或 switch_inline_query 方便用户复制，
-        # 或者使用 Telegram 官方支持的复制功能：通过复制网页链接、或者是直接显示文本）
-        # 这里我们使用一个实用的按钮，把结果作为参数或者直接附带说明
         keyboard = [
             [InlineKeyboardButton(f"📋 复制结果: {result}", switch_inline_query_current_chat=str(result))]
         ]
