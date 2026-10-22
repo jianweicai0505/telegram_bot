@@ -62,14 +62,18 @@ while true; do
                 echo "❌ 错误：输入的 Token 格式不正确！"
             else
                 if [ -d "$INSTALL_DIR" ] && [ -f "$INSTALL_DIR/bot.py" ]; then
+                    # 使用 Bash 变量直接展开，避免 Python f-string 语法冲突
                     python3 -c "
+import re
 with open('$INSTALL_DIR/bot.py', 'r', encoding='utf-8') as f:
     content = f.read()
-import re
-new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', f'TOKEN = \"$NEW_TOKEN\"', content)
+
+new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', 'TOKEN = \"$NEW_TOKEN\"', content)
+
 with open('$INSTALL_DIR/bot.py', 'w', encoding='utf-8') as f:
     f.write(new_content)
-print(f'Token 更新成功，替换次数: {count}')
+
+print('Token 更新成功，替换次数:', count)
 "
                     echo "⚙️ Token 已自动更新，正在重启机器人..."
                     sudo systemctl restart telegram-calc-bot
