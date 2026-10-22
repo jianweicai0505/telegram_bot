@@ -75,22 +75,9 @@ else
   git pull origin main
 fi
 
-# 2. 动态注入 Token（通过环境变量传递，100% 安全无语法冲突）
+# 2. 调用独立的 set_token.py 脚本注入 Token，绝对不会有任何语法冲突
 echo "⚙️ 正在安全注入 Bot Token 配置..."
-export TARGET_TOKEN="$BOT_TOKEN"
-python3 -c "
-import re, os
-token = os.environ.get('TARGET_TOKEN')
-with open('bot.py', 'r', encoding='utf-8') as f:
-    content = f.read()
-
-new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', 'TOKEN = \"' + token + '\"', content)
-
-with open('bot.py', 'w', encoding='utf-8') as f:
-    f.write(new_content)
-
-print('Token 注入成功，替换次数:', count)
-"
+python3 set_token.py "$BOT_TOKEN"
 
 # 3. 安装依赖与虚拟环境
 echo "📦 正在检查并安装系统依赖..."
