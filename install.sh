@@ -75,14 +75,16 @@ else
   git pull origin main
 fi
 
-# 2. 动态注入 Token（通过 Bash 直接展开变量，彻底避免 Python f-string 语法冲突）
+# 2. 动态注入 Token（通过环境变量传递，100% 安全无语法冲突）
 echo "⚙️ 正在安全注入 Bot Token 配置..."
+export TARGET_TOKEN="$BOT_TOKEN"
 python3 -c "
-import re
+import re, os
+token = os.environ.get('TARGET_TOKEN')
 with open('bot.py', 'r', encoding='utf-8') as f:
     content = f.read()
 
-new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', 'TOKEN = \"${BOT_TOKEN}\"', content)
+new_content, count = re.subn(r'TOKEN\s*=\s*[\"'].*?[\"']', 'TOKEN = \"' + token + '\"', content)
 
 with open('bot.py', 'w', encoding='utf-8') as f:
     f.write(new_content)
